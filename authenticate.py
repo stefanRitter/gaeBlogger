@@ -63,8 +63,13 @@ class SignupHandler(webapp2.RequestHandler):
                 email_error = "that's not a valid email"
 
         if not password_error and not email_error and not name_error and not verify_error:
-            # no error so redirect to welcome page
+            # no error so save user in DB, write to cookie and redirect to welcome page
+
+            cookie = str('name=%s' % make_secure_val(user_name))
+            self.response.headers.add_header('Set-Cookie', cookie)
+
             self.redirect('/welcome')
+
         else:
             # errors found go back to form and tell user where the problem was
             self.write_form(user_name, user_email, name_error, password_error,
@@ -86,5 +91,9 @@ welcome = """
 
 class WelcomeHandler(webapp2.RequestHandler):
     def get(self):
-        user_name = self.request.get('username')
-        self.response.out.write(welcome % {'name': user_name})
+        user_name_cookie = self.request.cookies.get('name', None)
+        user_name = check_secure_val(user_name_cookie)
+        if user_name:
+            self.response.out.write(welcome % {'name': user_name})
+        else:
+            self.redirect('/signup')
