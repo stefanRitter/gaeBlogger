@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <h1>my blog</h1>
+    <hr>
+
+    {% for post in posts %}
+    <div>
+      <h2>{{post.subject}}</h2>
+      <p><pre>{{post.content}}</pre></p>
+      <p>{{post.created}}</p>
+    </div>
+    <hr>
+    {% endfor %}
+
+  </body>
+</html>
