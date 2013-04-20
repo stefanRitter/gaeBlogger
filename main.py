@@ -40,7 +40,7 @@ class MainHandler(webapp2.RequestHandler):
 app = webapp2.WSGIApplication([
     ('/', MainHandler), ('/unit2/rot13', RotHandler),
     ('/unit2/signup', SignupHandler), ('/unit2/welcome', WelcomeHandler),
-    ('/blog', BlogHandler), ('/blog/newpost', NewPostHandler)
+    ('/blog', BlogHandler), ('/blog/newpost', NewPostHandler), ('/blog/([0-9]+)', PostHandler)
 ], debug=True)
 
 #class TestHandler(webapp2.RequestHandler):

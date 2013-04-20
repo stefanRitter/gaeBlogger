@@ -12,6 +12,17 @@ class BlogHandler(webapp2.RequestHandler):
         self.response.out.write(template.render({'posts': posts}))
 
 
+class PostHandler(webapp2.RequestHandler):
+    def get(self, post_id):
+        post = Post.get_by_id(int(post_id))
+        template = jinja_environment.get_template('post.html')
+
+        if post:
+            self.response.out.write(template.render({'subject': post.subject, 'content': post.content, 'date': post.created}))
+        else:
+            self.redirect('/blog')
+
+
 class NewPostHandler(webapp2.RequestHandler):
     def render_newpost(self, error="", subject="", content=""):
         template = jinja_environment.get_template('newpost.html')
@@ -25,10 +36,10 @@ class NewPostHandler(webapp2.RequestHandler):
         content = self.request.get('content')
 
         if title and content:
-            # todo: put in db and redirect to permalink
             post = Post(subject=title, content=content)
             post.put()
-            self.redirect('/blog')
+            key = str(post.key().id())  # get id and convert to string
+            self.redirect('/blog/%s' % key)
         else:
             error = "you must provide a subject and content"
             self.render_newpost(error, title, content)
