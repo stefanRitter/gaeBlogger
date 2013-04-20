@@ -16,20 +16,8 @@
 #
 import webapp2
 
-from unit2 import *
+from authenticate import *
 from blog import *
-
-form = """
-<form method="post">
-  <input type="text" name="day">
-  <input type="text" name="month">
-  <input type="text" name="year">
-  <br>
-  <br>
-  <div style="color:red">%(error)s</div>
-  <input type="submit">
-</form>
-"""
 
 
 class MainHandler(webapp2.RequestHandler):
@@ -38,8 +26,7 @@ class MainHandler(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler), ('/unit2/rot13', RotHandler),
-    ('/unit2/signup', SignupHandler), ('/unit2/welcome', WelcomeHandler),
+    ('/', MainHandler), ('/signup', SignupHandler), ('/welcome', WelcomeHandler),
     ('/blog', BlogHandler), ('/blog/newpost', NewPostHandler), ('/blog/([0-9]+)', PostHandler)
 ], debug=True)
 
