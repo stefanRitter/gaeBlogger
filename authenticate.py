@@ -3,7 +3,7 @@ import re  # regular expressions
 
 from hashing import *
 from templates import *
-
+from data import *
 
 USER_RE = re.compile(r"^[a-zA-Z0-9_-]{3,20}$")
 PASS_RE = re.compile(r"^.{3,20}$")
@@ -20,6 +20,46 @@ def valid_email(email):
 
 def valid_password(password):
     return PASS_RE.match(password)
+
+
+class LogoutHandler(webapp2.RequestHandler):
+    def get(self):
+        cookie = str('name=;Path=/')
+        self.response.headers.add_header('Set-Cookie', cookie)
+
+        self.redirect('/signup')
+
+
+class LoginHandler(webapp2.RequestHandler):
+    def write_form(self, name='', error=''):
+        template = jinja_environment.get_template('login.html')
+        self.response.out.write(template.render({'name': name, 'error': error}))
+
+    def get(self):
+        self.write_form()
+
+    def post(self):
+        user_name = self.request.get('username')
+        user_password = self.request.get('password')
+
+        if not valid_name(user_name) or not valid_password(user_password):
+            error = 'check your spelling, invalid user or password'
+            self.write_form(user_name, error)
+
+        else:
+            # find user in db
+            user = db.GqlQuery("select * from User where name=:1 limit 1", user_name).get()
+
+            if user and valid_pw(user_name, user_password, user.password):
+                # correct login
+                key = str(user.key().id())
+                cookie = str('name=%s;Path=/' % make_secure_val(key))
+                self.response.headers.add_header('Set-Cookie', cookie)
+
+                self.redirect('/welcome')
+            else:
+                error = "can't find user or used an invalid password"
+                self.write_form(user_name, error)
 
 
 class SignupHandler(webapp2.RequestHandler):
@@ -43,7 +83,12 @@ class SignupHandler(webapp2.RequestHandler):
         user_email = self.request.get('email')
 
         if user_name and valid_name(user_name):
-            name_error = ''
+            # check if user name is already taken
+            taken = db.GqlQuery("select * from User where name=:1 limit 1", user_name).get()
+            if taken:
+                name_error = 'user name is already taken'
+            else:
+                name_error = ''
         else:
             name_error = "please only use letters and numbers"
 
@@ -61,11 +106,18 @@ class SignupHandler(webapp2.RequestHandler):
         if user_email:
             if not valid_email(user_email):
                 email_error = "that's not a valid email"
+        else:
+            user_email = ''
 
         if not password_error and not email_error and not name_error and not verify_error:
+
             # no error so save user in DB, write to cookie and redirect to welcome page
 
-            cookie = str('name=%s' % make_secure_val(user_name))
+            new_user = User(name=user_name, password=make_pw_hash(user_name, password), email=user_email)
+            new_user.put()
+            key = str(new_user.key().id())  # get id and convert to string
+
+            cookie = str('name=%s;Path=/' % make_secure_val(key))
             self.response.headers.add_header('Set-Cookie', cookie)
 
             self.redirect('/welcome')
@@ -74,6 +126,7 @@ class SignupHandler(webapp2.RequestHandler):
             # errors found go back to form and tell user where the problem was
             self.write_form(user_name, user_email, name_error, password_error,
                             verify_error, email_error)
+
 
 welcome = """
 <!DOCTYPE html>
@@ -91,9 +144,16 @@ welcome = """
 
 class WelcomeHandler(webapp2.RequestHandler):
     def get(self):
-        user_name_cookie = self.request.cookies.get('name', None)
-        user_name = check_secure_val(user_name_cookie)
-        if user_name:
-            self.response.out.write(welcome % {'name': user_name})
-        else:
-            self.redirect('/signup')
+        user_id_cookie = self.request.cookies.get('name', None)
+        user_id = check_secure_val(user_id_cookie)
+
+        if user_id and user_id.isdigit():
+            # retrieve users from db
+            user = User.get_by_id(int(user_id))
+
+            if user:
+                self.response.out.write(welcome % {'name': user.name})
+                return
+
+        # not a valid user go back to signup
+        self.redirect('/signup')

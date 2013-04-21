@@ -11,3 +11,4 @@ class Post(db.Model):
 class User(db.Model):
     name = db.StringProperty(required=True)
     password = db.TextProperty(required=True)
+    email = db.StringProperty()

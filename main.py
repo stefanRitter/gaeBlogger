@@ -26,7 +26,8 @@ class MainHandler(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler), ('/signup/?', SignupHandler), ('/welcome/?', WelcomeHandler),
+    ('/', MainHandler), ('/welcome/?', WelcomeHandler),
+    ('/signup/?', SignupHandler), ('/login/?', LoginHandler), ('/logout/?', LogoutHandler),
     ('/blog/?', BlogHandler), ('/blog/newpost/?', NewPostHandler), ('/blog/([0-9]+)/?', PostHandler)
 ], debug=True)
 
