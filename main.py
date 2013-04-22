@@ -18,6 +18,7 @@ import webapp2
 
 from authenticate import *
 from blog import *
+from to_json import *
 
 
 class MainHandler(webapp2.RequestHandler):
@@ -26,10 +27,13 @@ class MainHandler(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
-    ('/', MainHandler), ('/welcome/?', WelcomeHandler),
+    ('/', BlogHandler), ('/welcome/?', WelcomeHandler),
     ('/signup/?', SignupHandler), ('/login/?', LoginHandler), ('/logout/?', LogoutHandler),
-    ('/blog/?', BlogHandler), ('/blog/newpost/?', NewPostHandler), ('/blog/([0-9]+)/?', PostHandler)
+    ('/blog/?', BlogHandler), ('/blog/newpost/?', NewPostHandler), ('/blog/([0-9]+)/?', PostHandler),
+    ('/.json/?', JsonBlogHandler), ('/blog/([0-9]+).json', JsonPostHandler),
+    ('/newpost/?', NewPostHandler), ('/([0-9]+)/?', PostHandler),
 ], debug=True)
+
 
 #class TestHandler(webapp2.RequestHandler):
 #    def post(self):
