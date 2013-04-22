@@ -7,11 +7,12 @@ from google.appengine.api import memcache
 from templates import *
 from data import *
 
+# blog memcache key
+key = 'blogmain'
+
 
 # load posts from memcache or DB if necessary
 def load_posts(update=False):
-    global timestamp
-    key = 'blogmain'
     posts = memcache.get(key)
 
     if posts is None or update:
@@ -23,6 +24,18 @@ def load_posts(update=False):
     return posts, memcache.get('time')
 
 
+# load individual post from memcache or DB if necessary
+def load_post(post_id, update=False):
+    posts = memcache.get(key)
+
+    for p in posts:
+        if str(p.key().id()) == post_id:
+            return p, memcache.get('time')
+
+    return Post.get_by_id(int(post_id)), 0
+
+
+# blog and post handlers
 class BlogHandler(webapp2.RequestHandler):
     def get(self):
         posts = load_posts()
@@ -32,11 +45,11 @@ class BlogHandler(webapp2.RequestHandler):
 
 class PostHandler(webapp2.RequestHandler):
     def get(self, post_id):
-        post = Post.get_by_id(int(post_id))
+        post = load_post(post_id)
         template = jinja_environment.get_template('post.html')
 
         if post:
-            self.response.out.write(template.render({'subject': post.subject, 'content': post.content, 'date': post.created, 'timestamp': 0}))
+            self.response.out.write(template.render({'post': post[0], 'timestamp': int(time.time() - post[1])}))
         else:
             self.redirect('/blog')
 

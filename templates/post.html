@@ -1,9 +1,9 @@
 {% extends "_base.html" %}
 
 {% block content %}
-    <h1>{{subject}}</h1>
-    <p><pre>{{content}}</pre></p>
-    <p>{{date}}</p>
+    <h1>{{post.subject}}</h1>
+    <p><pre>{{post.content}}</pre></p>
+    <p>{{post.created}}</p>
     <hr>
     <p>Queried {{timestamp}} seconds ago</p>
 {% endblock %}

@@ -4,7 +4,7 @@
 
     {% for post in posts %}
     <div>
-      <h2>{{post.subject}}</h2>
+      <h2><a href="/blog/{{ post.key().id() }}">{{post.subject}}</a></h2>
       <p><pre>{{post.content}}</pre></p>
       <p>{{post.created}}</p>
     </div>
