@@ -1,10 +1,6 @@
-<!DOCTYPE html>
-<html>
-  <head>
-  </head>
-  <body>
-    <h1>my blog</h1>
-    <hr>
+{% extends "_base.html" %}
+
+{% block content %}
 
     {% for post in posts %}
     <div>
@@ -14,6 +10,7 @@
     </div>
     <hr>
     {% endfor %}
+    <hr>
+    <p>Queried {{timestamp}} seconds ago</p>
 
-  </body>
-</html>
+{% endblock %}

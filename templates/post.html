@@ -1,11 +1,9 @@
-<!DOCTYPE html>
-<html>
-  <head>
-    <title>Post: {{subject}}</title>
-  </head>
-  <body>
+{% extends "_base.html" %}
+
+{% block content %}
     <h1>{{subject}}</h1>
     <p><pre>{{content}}</pre></p>
     <p>{{date}}</p>
-  </body>
-</html>
+    <hr>
+    <p>Queried {{timestamp}} seconds ago</p>
+{% endblock %}
