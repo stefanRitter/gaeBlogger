@@ -27,11 +27,10 @@ class MainHandler(webapp2.RequestHandler):
 
 
 app = webapp2.WSGIApplication([
-    ('/', BlogHandler), ('/welcome/?', WelcomeHandler),
+    ('/(?:blog/?)?', BlogHandler), ('/welcome/?', WelcomeHandler),
     ('/signup/?', SignupHandler), ('/login/?', LoginHandler), ('/logout/?', LogoutHandler),
-    ('/blog/?', BlogHandler), ('/blog/newpost/?', NewPostHandler), ('/blog/([0-9]+)/?', PostHandler),
-    ('/.json/?', JsonBlogHandler), ('/blog/([0-9]+).json', JsonPostHandler),
-    ('/newpost/?', NewPostHandler), ('/([0-9]+)/?', PostHandler),
+    ('(?:/blog)?/newpost/?', NewPostHandler), ('(?:/blog)?/([0-9]+)/?', PostHandler),
+    ('/\.json/?', JsonBlogHandler), ('(?:/blog)?/([0-9]+)\.json/?', JsonPostHandler)
 ], debug=True)
 
 
