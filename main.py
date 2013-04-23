@@ -30,7 +30,8 @@ app = webapp2.WSGIApplication([
     ('/(?:blog/?)?', BlogHandler), ('/welcome/?', WelcomeHandler),
     ('/signup/?', SignupHandler), ('/login/?', LoginHandler), ('/logout/?', LogoutHandler),
     ('(?:/blog)?/newpost/?', NewPostHandler), ('(?:/blog)?/([0-9]+)/?', PostHandler),
-    ('/\.json/?', JsonBlogHandler), ('(?:/blog)?/([0-9]+)\.json/?', JsonPostHandler)
+    ('/\.json/?', JsonBlogHandler), ('(?:/blog)?/([0-9]+)\.json/?', JsonPostHandler),
+    ('/flush/?', FlushHandler)
 ], debug=True)
 
 

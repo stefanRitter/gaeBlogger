@@ -1,5 +1,6 @@
 import webapp2
 import re  # regular expressions
+import datetime
 
 from hashing import *
 from templates import *
@@ -24,7 +25,7 @@ def valid_password(password):
 
 class LogoutHandler(webapp2.RequestHandler):
     def get(self):
-        cookie = str('name=;Path=/')
+        cookie = str('name=; Path=/')
         self.response.headers.add_header('Set-Cookie', cookie)
 
         self.redirect('/signup')
@@ -53,7 +54,8 @@ class LoginHandler(webapp2.RequestHandler):
             if user and valid_pw(user_name, user_password, user.password):
                 # correct login
                 key = str(user.key().id())
-                cookie = str('name=%s;Path=/' % make_secure_val(key))
+                cookie = str('name=%s; expires=%s; Path=/' % (make_secure_val(key), (datetime.date.today() +
+                                                                                     datetime.timedelta(days=30)).strftime('%c')))
                 self.response.headers.add_header('Set-Cookie', cookie)
 
                 self.redirect('/welcome')
@@ -116,8 +118,8 @@ class SignupHandler(webapp2.RequestHandler):
             new_user = User(name=user_name, password=make_pw_hash(user_name, password), email=user_email)
             new_user.put()
             key = str(new_user.key().id())  # get id and convert to string
-
-            cookie = str('name=%s;Path=/' % make_secure_val(key))
+            cookie = str('name=%s; expires=%s; Path=/' % (make_secure_val(key), (datetime.date.today() +
+                                                                                 datetime.timedelta(days=30)).strftime('%c')))
             self.response.headers.add_header('Set-Cookie', cookie)
 
             self.redirect('/welcome')

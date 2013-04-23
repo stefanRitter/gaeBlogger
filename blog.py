@@ -75,3 +75,10 @@ class NewPostHandler(webapp2.RequestHandler):
         else:
             error = "you must provide a subject and content"
             self.render_newpost(error, title, content)
+
+
+# flush memcache
+class FlushHandler(webapp2.RequestHandler):
+    def get(self):
+        memcache.flush_all()
+        self.redirect('/')
