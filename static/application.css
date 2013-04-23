@@ -2,3 +2,11 @@
 .label {text-align: right}
 
 .error {color: red}
+
+nav {
+  font-size: 13px;
+  color: gray;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
